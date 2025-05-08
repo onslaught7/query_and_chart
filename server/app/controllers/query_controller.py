@@ -1,1 +1,5 @@
-# Handles queries from the user regarding the uplaoded files' content
+from app.services.llm_service import query_gemini
+
+
+prompt="Give me 5 steps of healthy life"
+print(query_gemini(prompt))
