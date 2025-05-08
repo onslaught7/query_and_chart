@@ -1,0 +1,1 @@
+# Routes to controller for chart generation

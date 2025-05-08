@@ -1,0 +1,1 @@
+# Handles queries from the user regarding the uplaoded files' content
