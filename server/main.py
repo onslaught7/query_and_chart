@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routes import uploadfile_routes
+from app.routes import uploadfile_routes, query_routes
 
 
 app = FastAPI()
@@ -11,3 +11,4 @@ async def root():
 
 
 app.include_router(uploadfile_routes.router, prefix="/api/uploads", tags=["Uploads"])
+app.include_router(query_routes.router, prefix="/api/query", tags=["Query"])

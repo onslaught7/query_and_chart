@@ -32,6 +32,7 @@ async def handle_file_upload(file: UploadFile, session_id: str = None):
         else:
             session_id = str(uuid.uuid4())
             user_sessions[session_id] = parsed_content
+        print(f"The generated session id: {session_id}") 
         return {"session_id": session_id, "message": "File Uploaded Sucessfully"}
     except Exception as e:
         return {"error": str(e)}

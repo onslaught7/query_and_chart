@@ -4,14 +4,14 @@ from google.genai import types
 
 
 GEMINI_API_KEY = settings.GEMINI_API_KEY
-LLM = "models/gemini-2.5-pro-exp-03-25"
+LLM_MODEL = settings.LLM_MODEL
 
 
 def query_gemini(prompt):
     try:
         client = genai.Client(api_key=GEMINI_API_KEY)
         response = client.models.generate_content(
-            model=LLM,
+            model=LLM_MODEL,
             contents=prompt,
             config=types.GenerateContentConfig(
                 temperature=0.4
