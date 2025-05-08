@@ -11,7 +11,7 @@ user_sessions = {}
 
 def parse_file(file: UploadFile):
     filename = file.filename.lower()
-    print(f"File {file.file} received at the parse_file function in uploadfile_controller.py: {file.filename}")
+    print(f"✅File {file.file} received at the parse_file function in uploadfile_controller.py: {file.filename}")
     if filename.endswith(".csv"):
         content = file.file.read().decode("utf-8")
         df = pd.read_csv(io.StringIO(content))
