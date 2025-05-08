@@ -1,1 +1,9 @@
-# Routes to controller for querying of info
+from fastapi import APIRouter
+
+
+router = APIRouter()
+
+
+router.post("/query")
+async def queryFile(query: str):
+    pass
