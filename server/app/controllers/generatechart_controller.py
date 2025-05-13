@@ -12,6 +12,11 @@ def sanitize_llm_json(raw_response: str) -> dict:
     return json.loads(cleaned)
 
 
+def preprocess_dataframe():
+    # It is going to include a complete cleaning analogy of everything that is required to be done in the EDA step of cleaning
+    pass
+
+
 async def generate_chart(query: str, session_id: str = None):
     if not session_id in user_sessions:
         return {"error": "Invalid or expired session"}
@@ -46,6 +51,8 @@ async def generate_chart(query: str, session_id: str = None):
         print(f"Response from llm service: {response}")
         result = sanitize_llm_json(response)
         print(f"JSON Response for chart generation: {result}")
+        # Logic to pass in the df and the columns required to a preprocess_dataframe for cleaning the dataframe for these particular columns
+        # Passing this cleaned dataframe to the service chart_service and get the charts
         return result
     except JSONDecodeError as e:
         return {"error": f"LLM returned invalid JSON: {str(e)}"}
