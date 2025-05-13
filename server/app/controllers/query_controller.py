@@ -1,9 +1,9 @@
-from app.services.llm_service import query_gemini
+from app.controllers.uploadfile_controller import user_sessions
+from app.services.query_service import handle_user_query
 
 
-prompt="Give me 5 steps of healthy life"
-print(query_gemini(prompt))
-
-
-async def handle_query(query: str):
-    pass
+async def query_handler(query: str, session_id: str):
+    if not session_id in user_sessions:
+        return {"error": "Invalid or expired session"}
+    else:
+        return handle_user_query(query, session_id)

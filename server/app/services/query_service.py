@@ -2,10 +2,8 @@ from app.services.llm_service import query_gemini
 from app.controllers.uploadfile_controller import user_sessions
 
 
-async def handle_user_query(query: str, session_id: str):
+def handle_user_query(query: str, session_id: str):
     try:
-        if session_id not in user_sessions:
-            return {"error": "Invalid or expired session"}
         file_content = user_sessions[session_id]
         prompt = f"""
             The user has uploaded the following data: {file_content}

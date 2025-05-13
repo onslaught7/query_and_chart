@@ -1,1 +1,4 @@
-# Handles generation of charts for the filed uploaded, making use of the chart_servies.py
+async def generate_chart(query: str, session_id: str = None):
+    if not session_id:
+        return 
+    
