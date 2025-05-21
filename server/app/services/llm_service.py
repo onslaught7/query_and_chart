@@ -27,6 +27,7 @@ def query_gemini(prompt):
 
 def query_gpt(prompt):
     try:
+        openai.api_key = OPENAI_API_KEY
         response = openai.chat.completions.create(
             model=OPENAI_LLM_MODEL,
             messages=[
