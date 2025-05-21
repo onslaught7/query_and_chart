@@ -24,6 +24,7 @@ def query_gemini(prompt):
     except Exception as e:
         print(f"An unexpected error occured: {e}")
 
+
 def query_gpt(prompt):
     try:
         response = openai.chat.completions.create(
