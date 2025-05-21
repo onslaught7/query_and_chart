@@ -24,6 +24,16 @@ def query_gemini(prompt):
     except Exception as e:
         print(f"An unexpected error occured: {e}")
 
-def query_gpt(prmpt):
+def query_gpt(prompt):
     try:
-        
+        response = openai.chat.completions.create(
+            model=OPENAI_LLM_MODEL,
+            messages=[
+                {"role": "system", "content": "You are a professional analyst who returns accurate, concise and detailed response to queries"},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"An unexpected error occured: {e}")
