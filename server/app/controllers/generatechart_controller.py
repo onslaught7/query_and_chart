@@ -18,6 +18,64 @@ def preprocess_dataframe():
     pass
 
 
+async def get_dataset_description(session_id: str, model: ModelName):
+    if not session_id in user_sessions:
+        return {"error": "Invalid or expired session"}
+    
+    try:
+        session_data = user_sessions[session_id]
+        raw_text = session_data["raw_text"]
+
+        if raw_text is None:
+            return {"error": "No DataFrame available for this session"}
+        
+        system_prompt = """
+        You are a professional data analyst tasked with profiling datasets. 
+        Your job is to:
+        1. Give a **clean, human-readable title** for the dataset.
+        2. Write a short **summary description** of what the dataset is about.
+        3. Analyze all the columns and describe their meanings clearly.
+        4. Detect column types: "numeric", "categorical", "datetime", or "text".
+
+        Return your response **only** as a JSON object in this format:
+        {
+        "title": "Descriptive Title",
+        "description": "Brief summary of the dataset",
+        "columns": [
+            {"name": "ColumnA", "type": "numeric", "description": "What this column means"},
+            ...
+        ]
+        }
+
+        Do not include markdown or any extra commentary and no triple backticks, no ```json. Output a valid JSON only.
+        """
+
+        user_prompt = f"""
+        Here is the dataset:
+
+        {raw_text}
+
+        Analyze and describe it as instructed.
+        """
+
+        full_prompt = system_prompt + "\n\n" + user_prompt
+
+        if model == ModelName.chatgpt:
+            response = query_gpt(full_prompt)
+        elif model == ModelName.gemini:
+            response = query_gemini(full_prompt)
+
+        print(f"Complete Description of the dataset: {response}")
+        result = sanitize_llm_json(response)
+        print(f"JSON Response description of the dataset: {result}")
+
+        return result
+    except JSONDecodeError as e:
+        return {"error": f"LLM returned invalid JSON: {str(e)}"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
 async def generate_chart(query: str, session_id: str, model: ModelName):
     if not session_id in user_sessions:
         return {"error": "Invalid or expired session"}
@@ -57,6 +115,7 @@ async def generate_chart(query: str, session_id: str, model: ModelName):
         result = sanitize_llm_json(response)
         print(f"JSON Response for chart generation: {result}")
         # Logic to pass in the df and the columns required to a preprocess_dataframe for cleaning the dataframe for these particular columns
+
         # Passing this cleaned dataframe to the service chart_service and get the charts
         return result
     except JSONDecodeError as e:
