@@ -58,5 +58,3 @@ async def generate_chart(query: str, session_id: str = None):
         return {"error": f"LLM returned invalid JSON: {str(e)}"}
     except Exception as e:
         return {"error": str(e)}
-    
-    
