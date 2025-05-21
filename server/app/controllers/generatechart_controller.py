@@ -1,5 +1,6 @@
 from app.controllers.uploadfile_controller import user_sessions
-from app.services.llm_service import query_gemini
+from app.services.llm_service import query_gemini, query_gpt
+from app.config.llm_models import ModelName
 from json import JSONDecodeError
 import json
 
@@ -17,7 +18,7 @@ def preprocess_dataframe():
     pass
 
 
-async def generate_chart(query: str, session_id: str = None):
+async def generate_chart(query: str, session_id: str, model: ModelName):
     if not session_id in user_sessions:
         return {"error": "Invalid or expired session"}
 
@@ -47,7 +48,11 @@ async def generate_chart(query: str, session_id: str = None):
         """
         full_prompt = system_prompt + "\n\n" + user_prompt
 
-        response = query_gemini(full_prompt)
+        if model == ModelName.chatgpt:
+            response = query_gpt(full_prompt)
+        elif model == ModelName.gemini:
+            response = query_gemini(full_prompt)
+
         print(f"Response from llm service: {response}")
         result = sanitize_llm_json(response)
         print(f"JSON Response for chart generation: {result}")
