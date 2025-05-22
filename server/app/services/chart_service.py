@@ -35,5 +35,24 @@ def create_chart_data(session_id: str, chart_types: List[str], required_columns:
                 }
             }
 
+            if chart_type == "bar":
+                if len(cols) == 2:
+                    if np.issubdtype(df[cols[1]].dtype, np.number):
+                        grouped = df.groupby(cols[0])[cols[1].sum().reset_index]
+                    else:
+                        return {"error": f"Column {cols[1]} must be numeric for bar chart"}
+                    chart_data["data"] = {
+                        "labels": grouped[cols[0]].astype(str).tolist(),
+                        "values": grouped[cols[1]].tolist()
+                    }
+                else:
+                    counts = df[cols[0]].value_counts().reset_index(name="count")
+                    chart_data["data"] = {
+                        "labels": counts[cols[0]].astype(str).tolist(),
+                        "values": counts["count"].tolist()
+                    }
+                chart_data["metadata"]["title"] = f"{chart_data['metadata']['y_label']} by {chart_data['metadata']['x_label']}"
+
+
     except Exception as e:
         return {"error": f"Failed to create chart data: {str(e)}"}
