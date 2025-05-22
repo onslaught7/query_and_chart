@@ -1,5 +1,6 @@
 from app.controllers.uploadfile_controller import user_sessions
 from app.services.llm_service import query_gemini, query_gpt
+from app.services.chart_service import create_chart_data
 from app.config.llm_models import ModelName
 from json import JSONDecodeError
 import json
@@ -126,7 +127,8 @@ async def generate_chart(query: str, session_id: str, model: ModelName):
         # Logic to pass in the df and the columns required to a preprocess_dataframe for cleaning the dataframe for these particular columns
 
         # Passing this cleaned dataframe to the service chart_service and get the charts
-        return result
+        chart_data = create_chart_data(session_id, result["chart_types"], result["required_columns"])
+        return chart_data
     except JSONDecodeError as e:
         return {"error": f"LLM returned invalid JSON: {str(e)}"}
     except Exception as e:
