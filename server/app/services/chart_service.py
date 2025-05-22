@@ -77,6 +77,16 @@ def create_chart_data(session_id: str, chart_types: List[str], required_columns:
                 }
                 chart_data["metadata"]["title"] = f"{chart_data['metadata']['y_label']} over {chart_data["metadata"]["x_label"]}"
 
+            elif chart_type == "scatter":
+                if len(cols) != 2:
+                    return {"error": "Scatter chart requires two numeric columns"}
+                if not all(np.issubdtype(df[col].dtype, np.number) for col in cols):
+                    return {"error": f"Columns {cols} must be numeric for scatter chart"}
+                chart_data["data"] = {
+                    "data": [{"x": x, "y": y} for x, y in zip(df[cols[0]], df[cols[1]])]
+                }
+                chart_data["metadata"]["title"] = f"{chart_data["metadata"]["y_label"]} vs {chart_data['metadata']['x_label']}"
+
             else:
                 return {"error": f"Unsupported chart type: {chart_type}"}
             
