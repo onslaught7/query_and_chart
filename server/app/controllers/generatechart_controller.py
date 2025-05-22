@@ -90,15 +90,24 @@ async def generate_chart(query: str, session_id: str, model: ModelName):
         column_names = df.columns.to_list()
 
         system_prompt = """
-            You are a data visualization assistant. Based on the user's query and available data columns,
-            suggest the best chart types and identify which columns are required for each chart.
-            Strictly Return only a JSON object with 'chart_types' and 'required_columns'.
-            Do NOT include markdown formatting (no triple backticks, no ```json).
-            Strictly respond with a JSON object like: 
-            {"chart_types": ["bar", "pie"], "required_columns": [["ColumnA", "ColumnB"], ["ColumnX"]]}'
-            Each array in the array of required_columns corresponds to each chart type in the array of chart_types
-             
+        You are a data visualization assistant. Based on the user's query and available data columns,
+        suggest the best chart types and identify which columns are required for each chart.
+        Strictly return only a JSON object with 'chart_types' and 'required_columns'.
+        Do NOT include markdown formatting (no triple backticks, no ```json).
+        Strictly respond with a JSON object like: 
+        {"chart_types": ["bar", "pie"], "required_columns": [["ColumnA", "ColumnB"], ["ColumnX"]]}
+        Each array in the array of required_columns corresponds to each chart type in the array of chart_types.
+
+        When choosing columns for charts that require both x and y axes (e.g., bar, line, scatter),
+        ensure that:
+        - The x-axis column should be categorical or time-based (e.g., region, product, date).
+        - The y-axis column should be quantitative/numeric (e.g., sales, revenue, profit, count).
+        - The first column in each pair must represent the x-axis.
+        - The second column in each pair must represent the y-axis.
+
+        Use only the available data columns provided and avoid using invalid or duplicate column combinations.
         """
+
         user_prompt = f"""
             User Query: {query}\n
             Available Columns: {column_names}\n\n
