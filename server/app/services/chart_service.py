@@ -63,7 +63,26 @@ def create_chart_data(session_id: str, chart_types: List[str], required_columns:
                 }
                 chart_data["metadata"]["title"] = f"Distribution of {chart_data['metadata']['x_label']}"
 
+            elif chart_type == "line":
+                if len(cols) != 2:
+                    return {"error": "Line chart requires two columns (x: datetime/numeric, y: numeric)"}
+                if not (np.issubdtype(df[cols[0]].dtype, np.datetime64) or np.issubdtype(df[cols[0]].dtype, np.number)):
+                    return {"error": f"Column {cols[0]} must be datetime or numeric for line chart"}
+                if not np.issubdtype(df[cols[1]].dtype, np.number):
+                    return {"error": f"Column {cols[1]} must be numeric for line chart"}
+                sorted_df = df.sort_values(cols[0])
+                chart_data["data"] = {
+                    "labels": sorted_df[cols[0]].astype(str).tolist(),
+                    "values": sorted_df[cols[1]].tolist()
+                }
+                chart_data["metadata"]["title"] = f"{chart_data['metadata']['y_label']} over {chart_data["metadata"]["x_label"]}"
+
+            else:
+                return {"error": f"Unsupported chart type: {chart_type}"}
             
+            charts.append(chart_data)
+
+            return {"charts": charts}
 
     except Exception as e:
         return {"error": f"Failed to create chart data: {str(e)}"}
