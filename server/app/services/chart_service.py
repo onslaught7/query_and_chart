@@ -53,6 +53,17 @@ def create_chart_data(session_id: str, chart_types: List[str], required_columns:
                     }
                 chart_data["metadata"]["title"] = f"{chart_data['metadata']['y_label']} by {chart_data['metadata']['x_label']}"
 
+            elif chart_type == "pie":
+                if len(cols) != 1:
+                    return {"error": "Pie chart requires exactly one categorical column"}
+                counts = df[cols[0]].value_counts().reset_index(name="count")
+                chart_data["data"] = {
+                    "labels": counts[cols[0]].astype(str).tolist(),
+                    "values": counts["count"].tolist()
+                }
+                chart_data["metadata"]["title"] = f"Distribution of {chart_data['metadata']['x_label']}"
+
+            
 
     except Exception as e:
         return {"error": f"Failed to create chart data: {str(e)}"}
